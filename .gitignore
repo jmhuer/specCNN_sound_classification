@@ -1,0 +1,18 @@
+led / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+*.jpg
+*.png
+
+# specific files
+logs/
+Model/saved_models/
+Data/images/
+Data/Audio
+Data/dataset/
+Data/dataset_full/
+Data/UrbanSound8K/
+.idea/
+
