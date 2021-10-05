@@ -1,7 +1,4 @@
-import cv2
 from Model import load_weights, image_transforms, tensor_transform, MyResNet, CNNClassifier, newest_model
-from PIL import Image
-import numpy as np
 import time
 from Model import classes
 from Model import tensor_transform
