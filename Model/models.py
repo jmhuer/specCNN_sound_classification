@@ -5,8 +5,8 @@ import torch.nn.functional as F
 
 ##all models use same classes
 classes = ['child',
-           'male',
-           'female']
+           'female',
+           'male']
 
 class CNNClassifier(torch.nn.Module):
     def __init__(self, n_classes=len(classes), layers=[32, 64, 128, 256], n_input_channels=3, kernel_size=5):
@@ -73,6 +73,7 @@ class MyResNet(torch.nn.Module):
         '''takes one image torch tensor outputs class'''
         logits = self.forward(image[None].float())
         argmax = int(torch.argmax(logits))
+        # print(logits)
         return self.classes[argmax]
     def forward(self, x):
         return self.model(x)

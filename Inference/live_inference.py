@@ -29,7 +29,7 @@ class running_majority:
             elif self.elements[0] < e:
                 heapreplace(self.elements, e)
 
-    def __init__(self, frame_window=3):
+    def __init__(self, frame_window=2):
         global classes
         self.h = running_majority.TopNHeap(frame_window)
         self.word_counter = {}
@@ -55,7 +55,7 @@ def inference(model, wav):
 def run_live_inference(model, camera_source):
     RATE = 16000
     CHUNK = int(RATE * 3.0)
-    majority = running_majority(frame_window=3)
+    majority = running_majority(frame_window=1)
 
     with MicrophoneStream(RATE, CHUNK) as stream:
         audio_generator = stream.generator()
