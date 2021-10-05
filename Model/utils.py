@@ -4,7 +4,7 @@ from .transforms import tensor_transform
 import os
 import torchaudio
 
-classes = ['air_conditioner','car_horn','children_playing','dog_bark','drilling', 'engine_idling' , 'gun_shot', 'jackhammer' , 'siren' ,'street_music']
+
 
 class Dataset(Dataset):
     def __init__(self, dataset_path, transform=tensor_transform):

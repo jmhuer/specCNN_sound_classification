@@ -1,9 +1,14 @@
 import cv2
-from Model import load_weights, image_transforms, tensor_transform, LastLayer_Alexnet, CNNClassifier, newest_model
+from Model import load_weights, image_transforms, tensor_transform, MyResNet, CNNClassifier, newest_model
 from PIL import Image
 import numpy as np
 import time
 from Model import classes
+from Model import tensor_transform
+import torchaudio
+import numpy as np
+from scipy.io import wavfile
+from .microphone_stream import MicrophoneStream
 
 
 class running_majority:
@@ -28,6 +33,7 @@ class running_majority:
                 heapreplace(self.elements, e)
 
     def __init__(self, frame_window=10):
+        global classes
         self.h = running_majority.TopNHeap(frame_window)
         self.word_counter = {}
         for c in classes:
@@ -41,42 +47,39 @@ class running_majority:
         return max(set(words), key=words.count)
 
 
-def inference(model, image):
+def inference(model, wav):
     '''image pre_processing'''
-    PIL_image = Image.fromarray(image)  ##convert 2 pil to apply test transforms uniformly
-    image_t = tensor_transform['valid'](PIL_image)
+    image_t = tensor_transform['valid'](wav)
     # torchvision.utils.save_image(image_t, "test1.jpg") ##weird this messes things up
     p = model.predict(image_t)
     return p
 
 
 def run_live_inference(model, camera_source):
-    cap = cv2.VideoCapture(camera_source)
-    majority = running_majority(frame_window=20)
-    # Check if the webcam is opened correctly
-    if not cap.isOpened():
-        raise IOError("Cannot open webcam")
+    RATE = 16000
+    CHUNK = int(RATE * 3.0)
+    majority = running_majority(frame_window=3)
 
-    while True:
-        ret, image = cap.read()
-        image = cv2.resize(image, (256, 200))  ##resize for display
-        pred = inference(model, cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        majority.add(pred)
-        pred = majority.predict()
-        print("Detected class: ", pred)
-        image = cv2.putText(image, pred, (0, np.shape(image)[0]), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0))
-        cv2.imshow('stream', image)
-        k = cv2.waitKey(1)
-        if not ret:
-            break
-        if k % 256 == 27:
-            # ESC pressed
-            print("Escape hit, closing...")
-            break
-        # time.sleep(1)
-    cap.release()
-    cv2.destroyAllWindows()
+    with MicrophoneStream(RATE, CHUNK) as stream:
+        audio_generator = stream.generator()
+        for chunk in audio_generator:
+            print("recording in progress...")
+            try:
+                arr = np.frombuffer(chunk, dtype=np.int16)
 
+                #f = tempfile.NamedTemporaryFile(delete=False, suffix='.wav', dir="nothing")
+                wavfile.write('Inference/live_data/new.wav', RATE, arr)
+
+            except (KeyboardInterrupt, SystemExit):
+                print('Shutting Down -- closing file')
+
+
+            waveform, sample_rate = torchaudio.load(filepath='Inference/live_data/new.wav')
+
+            pred = inference(model, waveform)
+            majority.add(pred)
+            pred = majority.predict()
+            print("Detected class: ", pred)
 
 if __name__ == '__main__':
     import argparse
@@ -88,12 +91,12 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     # Put custom arguments here
-    parser.add_argument('-s', '--camera_source', type=int, default=0)
+    parser.add_argument('-s', '--mic_source', type=int, default=0)
     parser.add_argument('-m', '--model_path', type=str, default=default_model_path)
     args = parser.parse_args()
 
     print('Using model path: {}'.format(args.model_path))
-    model = LastLayer_Alexnet()
+    model = MyResNet()
     model = load_weights(model, args.model_path)
 
-    run_live_inference(model, args.camera_source)
+    run_live_inference(model, args.mic_source)

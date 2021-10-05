@@ -4,7 +4,7 @@ import threading
 
 import torchvision
 
-from .models import CNNClassifier, save_model, load_weights
+from .models import CNNClassifier, save_model, load_weights, MyResNet, LastLayer_Alexnet
 import torch
 import tensorboardX as tb
 import os
@@ -16,7 +16,7 @@ import webbrowser
 
 def open_models():
     webbrowser.open('file://' + os.path.realpath(
-        '/Users/juanhuerta/work/work_projects/Sound_classification_started_code/Model/saved_models'))  # Go to example.com
+        'Model/saved_models'))  # Go to example.com
 
 def train(args):
     from os import path
@@ -37,7 +37,10 @@ def train(args):
     if continue training args we load weights
     if cnt training then load weights
     '''
-    model = CNNClassifier(n_input_channels=1)
+#     model = CNNClassifier(n_input_channels=1)
+    model = MyResNet(in_channels=1)
+#     model = LastLayer_Alexnet()
+
     # model = FCN(use_skip=False)
     if args.continue_training: load_weights(model, args.continue_training)
     model = model.to(device)
@@ -58,24 +61,8 @@ def train(args):
     return dictionary with train and valid items. For example data['train']
     assumes dataset is a folder with train and val subfolders
     '''
-    print("\n")
-    print("\n")
-    print("\n")
-    print("\n")
-    print("\n")
-    print("\n")
-    print("\n")
-    print("\n")
-    print("\n")
-    print("\n")
-    print("\n")
-    print("\n")
-    print("\n")
-    print("\n")
-    print("Plese drag direcotry")
-    dir = input()
-    dir = dir[0:len(dir)-1]
-    dir = "/Users/juanhuerta/work/work_projects/Sound_classification_started_code/Data/dataset"
+
+    dir = "Data/dataset"
     data = load_data(dir, transforms=tensor_transform, num_workers=1)
     print(" ")
     print("[1] Specogram + CNN Classifier")
@@ -140,10 +127,10 @@ def train(args):
                              global_step, label_id[0],fname[0])
         else:
             print("\n")
-            print('epoch %-3d \t va_loss = %0.6f  ' % (epoch, sum(scores)/len(scores) ) )
+            print('epoch %-3d \t va_accuracy= %0.6f  ' % (epoch, sum(scores)/len(scores) ) )
             print("\n")
         info = "epoch" + str(epoch) + "_" + str(round(float(sum(scores)/len(scores)), 2))
-    save_model(model, info)
+        save_model(model, info)
     print(" ")
     print("What would like to do next?")
     print(" ")
@@ -162,8 +149,8 @@ if __name__ == '__main__':
 
     parser.add_argument('--log_dir')
     # Put custom arguments here
-    parser.add_argument('-n', '--num_epoch', type=int, default=2)
-    parser.add_argument('-lr', '--learning_rate', type=float, default=1e-3)
+    parser.add_argument('-n', '--num_epoch', type=int, default=20)
+    parser.add_argument('-lr', '--learning_rate', type=float, default=2e-3)
     parser.add_argument('-w', '--weight_decay', type=float, default=1e-5)
     parser.add_argument('-c', '--continue_training', type=str)
 

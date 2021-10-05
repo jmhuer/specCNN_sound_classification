@@ -4,13 +4,12 @@ from .utils import overrides
 import torch.nn.functional as F
 
 ##all models use same classes
-classes = ['air_conditioner',
-           'car_horn',
-           'children_playing',
-           'me']
+classes = ['child',
+           'male',
+           'female']
 
 class CNNClassifier(torch.nn.Module):
-    def __init__(self, n_classes=len(classes), layers=[16, 32, 64, 128], n_input_channels=3, kernel_size=5):
+    def __init__(self, n_classes=len(classes), layers=[32, 64, 128, 256], n_input_channels=3, kernel_size=5):
         super().__init__()
         self.classes = classes
         L = []
@@ -33,6 +32,9 @@ class CNNClassifier(torch.nn.Module):
         return self.classes[argmax]
 
 
+
+
+
 class LastLayer_Alexnet(torch.nn.Module):
     def __init__(self, n_classes=len(classes)):
         super().__init__()
@@ -40,7 +42,9 @@ class LastLayer_Alexnet(torch.nn.Module):
         self.network = torchvision.models.alexnet(pretrained=True) ##first time it will download weights
         self.new_layer = torch.nn.Linear(4096, n_classes)
         self.network.classifier[6] = self.new_layer
-
+        self.features_layer =  torch.nn.Conv2d(1, 64, kernel_size=11, stride=4, padding=2)
+        self.network.features[0] = self.features_layer
+        self.full = torch.nn.Sequential(self.features_layer, self.new_layer) 
     def forward(self, x):
         return self.network(x)
 
@@ -52,7 +56,27 @@ class LastLayer_Alexnet(torch.nn.Module):
 
     @overrides(torch.nn.Module)
     def parameters(self, recurse: bool = True):
-        return self.new_layer.parameters()
+        return self.full.parameters()
+
+
+    
+
+class MyResNet(torch.nn.Module):
+    def __init__(self, in_channels=1):
+        super(MyResNet, self).__init__()
+        self.model = torchvision.models.resnet18(pretrained=False)
+        self.classes = classes
+     # original definition of the first layer on the renset class
+     # self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        self.model.conv1 = torch.nn.Conv2d(in_channels, 64, kernel_size=7, stride=2, padding=3, bias=False)
+    def predict(self, image):
+        '''takes one image torch tensor outputs class'''
+        logits = self.forward(image[None].float())
+        argmax = int(torch.argmax(logits))
+        return self.classes[argmax]
+    def forward(self, x):
+        return self.model(x)
+
 
 
 'mid layer stores code'
