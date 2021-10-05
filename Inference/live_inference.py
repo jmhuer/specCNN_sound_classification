@@ -32,7 +32,7 @@ class running_majority:
             elif self.elements[0] < e:
                 heapreplace(self.elements, e)
 
-    def __init__(self, frame_window=10):
+    def __init__(self, frame_window=3):
         global classes
         self.h = running_majority.TopNHeap(frame_window)
         self.word_counter = {}
