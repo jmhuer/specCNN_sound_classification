@@ -36,7 +36,7 @@ Data/UrbanSound8K/audio/
 
 ```
 
-This assumes: classes =  ["fold1","fold2","fold3","fold4","fold5","fold6","fold8", "fold9", "fold10"]
+This assumes: classes =  ["fold1","fold2","fold3","fold4" ...]
 
 Specify path: 
 base = "Data/UrbanSound8K/audio/"
