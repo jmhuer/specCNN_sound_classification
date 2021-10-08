@@ -18,13 +18,20 @@ python -m Data.rec_data
 ```
 
 # (Optional) Step 1b: Breakdown existing dataset
+If you have a folder with each different sound you would like to classify such as
+folder = ["fold1","fold2","fold3","fold4","fold5","fold6","fold8", "fold9", "fold10"]
 
+This assumes: classes =  ["fold1","fold2","fold3","fold4","fold5","fold6","fold8", "fold9", "fold10"]
+
+Specify path: 
 base = "Data/UrbanSound8K/audio/"
+
+Specify target folder path: 
 target = "Data/Audio/"
+
 ```
 python -m Data.manipulate_dataset
 ```
-
 
 # Step 2: Train Model
 
