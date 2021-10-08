@@ -19,7 +19,22 @@ python -m Data.rec_data
 
 # (Optional) Step 1b: Breakdown existing dataset
 If you have a folder with each different sound you would like to classify such as
-folder = ["fold1","fold2","fold3","fold4","fold5","fold6","fold8", "fold9", "fold10"]
+```
+Data/UrbanSound8K/audio/
+ ───folder1
+│   │   example1.wav
+│   │   example1.wav      
+└───folder2
+│   │   example1.wav
+│   │   example1.wav      
+└───folder3
+│   │   example1.wav
+│   │   example1.wav      
+└───folder4 
+...
+...
+
+```
 
 This assumes: classes =  ["fold1","fold2","fold3","fold4","fold5","fold6","fold8", "fold9", "fold10"]
 
