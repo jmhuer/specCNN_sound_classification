@@ -1,5 +1,5 @@
 # specCNN_sound_classification
-Pytorch workspace for sound classification projects. Few model options available, including a standard CNN Classifier, Pre-trained AlexNet, Pre-trained ResNet50, and other standard architectures.
+Pytorch workspace for sound classification projects. Few model options available, including a standard CNN Classifier, Pre-trained AlexNet, Pre-trained ResNet15, and other standard architectures.
 
 Code is ready for cpu or gpu training.
 
@@ -62,6 +62,12 @@ model = MyResNet()
 ```
 loss = torch.nn.CrossEntropyLoss().to(device)
 ```
+Finally run: 
+```
+python -m Model.train 
+```
+See arg options for logging and other hyperparameter specifications 
+
 # Step 3: Live inference model
 
 Test your model. 
