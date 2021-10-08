@@ -10,14 +10,21 @@ First decide classes (Model/models.py)
 classes = ["class1", "class2", "class3" ...., "class20"]
 ```
 
-# (Optional) Step 1: Collect Data
-This code opens camera stream. Click space bar to take image, and append to labels.csv
+# (Optional) Step 1a: Collect Data
+Record microphone stream continously using 3 sec chucks 
 
-For example, if we would like to collect data for label = 2
 ```
-python -m Data.collect -c 2 
+python -m Data.rec_data
 ```
-code will name the images label_#perclass.jpg
+
+# (Optional) Step 1b: Breakdown existing dataset
+
+base = "Data/UrbanSound8K/audio/"
+target = "Data/Audio/"
+```
+python -m Data.manipulate_dataset
+```
+
 
 # Step 2: Train Model
 
@@ -25,7 +32,7 @@ Select model and loss
 
 For example:
 ```
-model = LastLayer_Alexnet()
+model = MyResNet()
 ```
 ```
 loss = torch.nn.CrossEntropyLoss().to(device)
